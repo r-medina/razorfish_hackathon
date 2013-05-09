@@ -2,3 +2,5 @@ May 2013
 Prep Team's hack for Razorfish x Citibank hackathon
 
 To set up environment, run ". setup.sh"
+To activate the virtual environment therafter, run "source env/bin/activate"
+To deactivate the virtual env run "deactivate"
