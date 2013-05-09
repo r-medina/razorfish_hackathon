@@ -7,8 +7,8 @@ oauth = OAuth()
 linkedin = oauth.remote_app(
         base_url ='http://api.linkedin.com/v1/',
         name='linkedin',
-        consumer_key='f24f789b-5400-4fcb-b45b-53c3ac0bac08',
-        consumer_secret='4a1a8343-7f2a-4310-9d0a-d1fc66cf71d1',
+        consumer_key='2hjvezdzq589',
+        consumer_secret='RG1YTVEbbbLRY8rQ',
         request_token_url='https://api.linkedin.com/uas/oauth/requestToken',
         access_token_url='https://api.linkedin.com/uas/oauth/accessToken',
         authorize_url='https://www.linkedin.com/uas/oauth/authenticate')
@@ -74,9 +74,6 @@ def oauth_authorized(resp,oauth_token=None):
 
 @app.route('/')
 def index():
-    return render_template('home.html',
-                           pagetitle='home')
-'''
     try:
         token = session['user_oauth_token']
     except KeyError:
@@ -91,7 +88,8 @@ def index():
     if resp.status == 200:
         profile = resp.data
         return render_template('home.html',Profile=profile)
-'''
+
+
 '''
 @app.route('/')
 def index():
