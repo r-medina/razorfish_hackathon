@@ -80,7 +80,8 @@ def index():
         token = None
         
     if token == None:
-        return redirect(url_for('login'))
+        #return redirect(url_for('login'))
+        return render_template('home.html')
     
     profile_req_url = 'http://api.linkedin.com/v1/people/~?format=json'
     resp = linkedin.get(profile_req_url)
