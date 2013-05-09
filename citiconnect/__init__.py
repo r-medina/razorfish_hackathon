@@ -15,6 +15,7 @@ DB_PASSWORD = 'prep4prep'
 DB_HOST_ADDRESS = 'ds051007.mongolab.com:51007/citiconnect'
 
 import citiconnect.views
+import connect_score
 
 if __name__ == '__main__':
     app.run()
