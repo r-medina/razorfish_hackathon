@@ -9,7 +9,12 @@ app.debug = DEBUG
 app.secret_key = SECRET_KEY
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', SECRET_KEY)
 
-import hack.views
+DB_NAME = 'citiconnect'
+DB_USERNAME = 'citiconnectdb'
+DB_PASSWORD = 'prep4prep'
+DB_HOST_ADDRESS = 'ds051007.mongolab.com:51007/citiconnect'
+
+import citiconnect.views
 
 if __name__ == '__main__':
     app.run()
