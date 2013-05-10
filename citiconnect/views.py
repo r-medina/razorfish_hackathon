@@ -1,7 +1,7 @@
 from flask import request, make_response, Response, session, redirect, url_for, render_template
 from flask_oauth import OAuth
 from citiconnect import app
-from models import User
+from models import User, Position
 from connect_score.make_score import make_score
 import json
 from datetime import datetime, timedelta
@@ -74,8 +74,7 @@ def oauth_authorized(resp,oauth_token=None):
     session['user_oauth_secret'] = resp['oauth_token_secret']
     session['user_id'] = get_id()
 
-
-    make_user()
+    make_user(check_exists=True)
 
     return redirect(next_url)
 
@@ -109,9 +108,12 @@ def go_page():
 
 @app.route('/get_score')
 def get_score():
-    # if everything goes right
     user = get_user()
-    a = make_score(user)
+    # if user hasn't been modified in over 12 hours
+    #if (datetime.now() - user.date_modified) > timedelta(12,0,0):
+    if user.network_score is not None:
+        make_user()
+    make_score(user)
     return redirect('/score')
 
 @app.route('/join_group')
@@ -142,8 +144,8 @@ def check():
     #req_url = 'http://api.linkedin.com/v1/people/id=DHBm9Oo-M6:(positions)?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~:(num-recommenders)?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~:(network)?format=json'
-    #req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,educations,num-recommenders,positions:(startDate,endDate),siteStandardProfileRequest)?format=json'
-    req_url = 'http://api.linkedin.com/v1/people-search?facet=network,S&page=2&format=json'
+    req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,educations,num-recommenders,positions:(startDate,endDate),siteStandardProfileRequest)?format=json'
+    #req_url = 'http://api.linkedin.com/v1/people-search?facet=network,S&page=2&format=json'
     
     resp = linkedin.get(req_url)
     thing = resp.data
@@ -156,17 +158,20 @@ def index():
     return "Hello, World!"
 '''
 
-def make_user():
-    if User.objects(uid=session['user_id']).first():
-        return
+def make_user(check_exists=False):
+    if check_exists:
+        if get_user():
+            return
+        else:
+            user = User()
+    else:
+        user = get_user()
 
     # first api call
     req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,connections:(id),educations,num-recommenders,positions:(startDate,endDate),siteStandardProfileRequest)?format=json'
 
     resp = linkedin.get(req_url)
     linkedin_user = resp.data
-
-    user = User()
 
     user.uid = linkedin_user['id']
     user.first_name = linkedin_user['firstName']
@@ -176,14 +181,20 @@ def make_user():
     user.recommendations = linkedin_user['numRecommenders']
     user.prof_url = linkedin_user['siteStandardProfileRequest']['url'].split('&')[0]
 
+    positions = linkedin_user['positions']['values']
+
+    for position in positions:
+        pass
+    
     # second api call
     req_url = 'http://api.linkedin.com/v1/people/~/group-memberships/4409416?format=json'
     resp = linkedin.get(req_url)
     group_info = resp.data
 
-    if group_info['membershipState']['code'] == 'member':
-        user.in_group = True
-    else:
+    try:
+        if group_info['membershipState']['code'] == 'member':
+            user.in_group = True
+    except:
         user.in_group = False
 
     # third api call

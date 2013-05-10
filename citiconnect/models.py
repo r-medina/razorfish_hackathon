@@ -19,7 +19,7 @@ class User(db.Document):
     recommendations = db.IntField(required=True)
     activities_last_month = db.IntField()
     #months_worked = db.IntField()
-    #positions = db.ListField(db.EmbeddedDocumentField(Positions))
+    #positions = db.ListField(db.EmbeddedDocumentField(Position))
     network_score = db.FloatField()
     resume_score = db.FloatField()
     activity_score = db.FloatField()
@@ -29,9 +29,8 @@ class User(db.Document):
     def __unicode__(self):
         return self.first_name
 
-
-'''
-class Positions(db.EmbeddedDocument):
-    start_date = db.
-    end_date = db.
-''' 
+class Position(db.EmbeddedDocument):
+    start_year = db.IntField()
+    start_month = db.IntField()
+    end_year = db.IntField()
+    end_month = db.IntField()
