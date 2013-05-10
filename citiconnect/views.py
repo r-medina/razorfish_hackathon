@@ -135,8 +135,8 @@ def score_page():
 
 @app.route('/rankings')
 def rank():
-    network_list = User.objects.order_by('-network_score')
-    resume_list = User.objects.order_by('-resume_score')
+    network_list = User.objects.order_by('-network_score')[:10]
+    resume_list = User.objects.order_by('-resume_score')[:10]
     activity_list = User.objects.order_by('-activity_score')
     return render_template('ranking_page.html',
                            pagetitle="rank",
@@ -144,6 +144,12 @@ def rank():
                            resume_list=resume_list,
                            activity_list=activity_list
                            )
+
+
+@app.route('/howto_improve_score')
+def howto_improve_score():
+    return render_template('howto_improve_score.html',
+                           pagetitle='improve score')
 
 
 @app.route('/check')

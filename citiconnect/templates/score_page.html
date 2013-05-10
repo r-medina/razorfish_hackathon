@@ -9,12 +9,14 @@
 	  
 	<div class="row-fluid">
 	  <div class="span2">
-	    <img src="{{ picture }}">
+	    <img src="{{ picture }}" width="100%">
             <a href="{{ user.prof_url }}" target="_blank" class="btn btn-inverse full-name">{{ user.first_name }} {{ user.last_name }}</a>
 	  </div>
     <div class="span3">
         <h2>Your Score:</h2><p><span class="score final-score">{{ '%0.2f' | format(user.final_score) }}</span></p>
-        <p><a href="/rankings">view rankings</a></p>        
+	<hr>
+        <a class="no-dec" href="/rankings">view rankings</a><br>
+	<a class="no-dec" href="/howto_improve_score">how to improve score</a>
     </div>
     <div class="span7">
         <h3>WHAT IS A CITICONNECT SCORE?</h3>
