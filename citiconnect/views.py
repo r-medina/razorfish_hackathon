@@ -208,19 +208,7 @@ def make_user(check_exists=False):
     positions = linkedin_user['positions']['values']
     
     now = datetime.now()
-    '''
-    for position in positions:
-        uposition = Position()
-        uposition.start_year = position['startDate']['year']
-        uposition.start_month = position['startDate']['month']
-        try:
-            uposition.end_year = position['endDate']['year']
-            uposition.end_month = position['endDate']['month']
-        except KeyError:
-            uposition.end_year = now.year
-            uposition.end_month = now.month
-        user.positions.append(uposition)
-    '''
+
     months_worked = 0
     for position in positions:
         try:

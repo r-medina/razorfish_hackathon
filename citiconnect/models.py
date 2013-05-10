@@ -23,6 +23,7 @@ class User(db.Document):
     resume_score = db.FloatField()
     activity_score = db.FloatField()
     date_modified = db.DateTimeField()
+    final_score = db IntField()
     def save(self, *args, **kwargs):
         return my_save(self, *args, **kwargs)
     def __unicode__(self):
