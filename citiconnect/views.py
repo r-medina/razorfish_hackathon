@@ -281,4 +281,7 @@ def get_picture():
     pic_req_url = 'http://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json'
     resp = linkedin.get(pic_req_url)
     picture_url = resp.data
-    return picture_url['values'][0]
+    try:
+        return picture_url['values'][0]
+    except KeyError:
+        return None
