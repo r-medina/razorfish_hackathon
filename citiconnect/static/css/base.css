@@ -3,6 +3,14 @@ span.score {
     font-style: italic;
 }
 
+span.final-score{
+    font-size: 75px;
+}
+
+.less-padding{
+    padding:20px;
+}
+
 .navbar-inverse .brand{
     color:#FFFFFF;
 }

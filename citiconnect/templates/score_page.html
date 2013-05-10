@@ -5,13 +5,20 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span12">
-      <div class="hero-unit">
+      <div class="hero-unit less-padding">
 	  
 	<div class="row-fluid">
-	  <div class="span2 offset10">
+	  <div class="span2">
 	    <img src="{{ picture }}">
             <a href="{{ user.prof_url }}" target="_blank" class="btn btn-inverse full-name">{{ user.first_name }} {{ user.last_name }}</a>
 	  </div>
+    <div class="span3">
+        <h2>Your Score:</h2><p><span class="score final-score">{{ '%0.2f' | format(user.final_score) }}</span></p>
+    </div>
+    <div class="span7">
+        <h3>WHAT IS A CITICONNECT SCORE?</h3>
+        The CitiConnect Score is calculated by understanding a member’s Network, Resume and Activity.
+    </div>
 	</div>
 
       </div>
