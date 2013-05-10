@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span4">
+      <div class="well">
+    	<h3>Network Rankings:</h3>
+        <ol>
+          {% for user in network_list %}
+            <a href="{{ user.prof_url }}"><li>{{ user.first_name }} {{ user.last_name }}</li></a>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+
+    <div class="span4">
+      <div class="well">
+      	<h3>Resume Rankings:</h3>
+           <ol>
+            {% for user in resume_list %}
+              <a href="{{ user.prof_url }}"><li>{{ user.first_name }} {{ user.last_name }}</li></a>
+            {% endfor %}
+          </ol>
+        </div>
+    </div>
+
+    <div class="span4">
+      <div class="well">
+	<h3>Activity Rankings:</h3>
+  <ol>
+    {% for user in activity_list %}
+      <a href="{{ user.prof_url }}"><li>{{ user.first_name }} {{ user.last_name }}</li></a>
+    {% endfor %}
+  </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock main %}
