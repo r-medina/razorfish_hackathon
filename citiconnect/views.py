@@ -84,12 +84,43 @@ def index():
         #return redirect(url_for('login'))
         return render_template('home.html')
     
-    profile_req_url = 'http://api.linkedin.com/v1/people/~?format=json'
-    resp = linkedin.get(profile_req_url)
+    #profile_req_url = 'http://api.linkedin.com/v1/people/~?format=json'
+    #resp = linkedin.get(profile_req_url)
     
-    if resp.status == 200:
-        profile = resp.data
-        return render_template('home.html',Profile=profile)
+    #if resp.status == 200:
+        #profile = resp.data
+        #return render_template('home.html',Profile=profile)
+    
+    # check if in group
+    # no?
+    return redirect('/join_group')
+    # yes?
+    # check if they have a score
+    # yes?
+    # return redirect('/score')
+    # no?
+    return redirect('/go')
+
+
+@app.route('/go')
+def init_score_button_page():
+    return render_template('go_page.html')
+
+
+@app.route('/get_score')
+def get_score():
+    # if everything goes right
+    return redirect('/score')
+
+
+@app.route('/join_group')
+def join():
+    return render_template('join_group.html')
+
+
+@app.route('/score')
+def score_page():
+    return render_template('score_page.html')
 
 
 @app.route('/check')
