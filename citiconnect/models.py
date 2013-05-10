@@ -18,8 +18,7 @@ class User(db.Document):
     educations = db.IntField(required=True)
     recommendations = db.IntField(required=True)
     activities_last_month = db.IntField()
-    #months_worked = db.IntField()
-    #positions = db.ListField(db.EmbeddedDocumentField(Position))
+    months_worked = db.IntField()
     network_score = db.FloatField()
     resume_score = db.FloatField()
     activity_score = db.FloatField()
@@ -28,9 +27,3 @@ class User(db.Document):
         return my_save(self, *args, **kwargs)
     def __unicode__(self):
         return self.first_name
-
-class Position(db.EmbeddedDocument):
-    start_year = db.IntField()
-    start_month = db.IntField()
-    end_year = db.IntField()
-    end_month = db.IntField()

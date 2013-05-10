@@ -1,7 +1,7 @@
 from flask import request, make_response, Response, session, redirect, url_for, render_template
 from flask_oauth import OAuth
 from citiconnect import app
-from models import User, Position
+from models import User
 from connect_score.make_score import make_score
 import json
 from datetime import datetime, timedelta
@@ -99,7 +99,7 @@ def index():
             return redirect('/go')
     else:
         return redirect('/join_group')
-
+    
 
 @app.route('/go')
 def go_page():
@@ -133,6 +133,12 @@ def score_page():
 
 @app.route('/check')
 def check():
+    now = datetime.now()
+    month_ago = now - timedelta(30)
+    since_epoch = int((month_ago - datetime(1970,1,1)).total_seconds()*1000.)
+
+    req_url = \
+            'http://api.linkedin.com/v1/people/~/network/updates?scope=self&after={0}&format=json'.format(since_epoch)
     #req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,educations,num-recommenders,positions:(startDate,endDate),connections:(id))?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,educations,num-recommenders,positions:(startDate,endDate))?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~?format=json'
@@ -144,11 +150,27 @@ def check():
     #req_url = 'http://api.linkedin.com/v1/people/id=DHBm9Oo-M6:(positions)?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~:(num-recommenders)?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~:(network)?format=json'
-    req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,educations,num-recommenders,positions:(startDate,endDate),siteStandardProfileRequest)?format=json'
+    #req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,educations,num-recommenders,positions:(startDate,endDate),siteStandardProfileRequest)?format=json'
     #req_url = 'http://api.linkedin.com/v1/people-search?facet=network,S&page=2&format=json'
     
     resp = linkedin.get(req_url)
     thing = resp.data
+    '''
+    a = thing['positions']['values']
+
+    b = datetime.now()
+    for position in a:
+        user_position = Position()
+        user_position.start_year = position['startDate']['year']
+        user_position.start_month = position['startDate']['month']
+        try:
+            user_position.end_year = position['endDate']['year']
+            user_position.end_month = position['endDate']['month']
+        except KeyError:
+            user_position.end_year = b.year
+            user_position.end_month = b.month
+    '''
+    #return str(a)
     return json.dumps(thing)
 
 
@@ -182,9 +204,34 @@ def make_user(check_exists=False):
     user.prof_url = linkedin_user['siteStandardProfileRequest']['url'].split('&')[0]
 
     positions = linkedin_user['positions']['values']
-
+    
+    now = datetime.now()
+    '''
     for position in positions:
-        pass
+        uposition = Position()
+        uposition.start_year = position['startDate']['year']
+        uposition.start_month = position['startDate']['month']
+        try:
+            uposition.end_year = position['endDate']['year']
+            uposition.end_month = position['endDate']['month']
+        except KeyError:
+            uposition.end_year = now.year
+            uposition.end_month = now.month
+        user.positions.append(uposition)
+    '''
+    months_worked = 0
+    for position in positions:
+        start_year = position['startDate']['year']
+        start_month = position['startDate']['month']
+        try:
+            end_year = position['endDate']['year']
+            end_month = position['endDate']['month']
+        except KeyError:
+            end_year = now.year
+            end_month = now.month
+        months_worked += (end_month-start_month)+12*(end_year-start_year)
+
+    user.months_worked = months_worked
     
     # second api call
     req_url = 'http://api.linkedin.com/v1/people/~/group-memberships/4409416?format=json'
@@ -201,8 +248,17 @@ def make_user(check_exists=False):
     req_url = 'http://api.linkedin.com/v1/people-search?facet=network,S&page=2&format=json'
     resp = linkedin.get(req_url)
     network_info = resp.data
-
     user.connections_2 = network_info['numResults']
+
+    # fourth api call
+    month_ago = now - timedelta(30)
+    since_epoch = int((month_ago - datetime(1970,1,1)).total_seconds()*1000.)
+
+    req_url = \
+            'http://api.linkedin.com/v1/people/~/network/updates?scope=self&after={0}&format=json'.format(since_epoch)
+    resp = linkedin.get(req_url)
+    activity_info = resp.data
+    user.activities_last_month = activity_info['_total']
 
     user.save()
 
