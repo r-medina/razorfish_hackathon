@@ -126,7 +126,7 @@ def score_page():
     user = get_user()
     picture_url = get_picture()
     if picture_url is None:
-        picture_url = "/static/images/ghost_profile.png"
+        picture_url = "/static/images/ghost_profile.jpg"
     return render_template('score_page.html',
                            pagetitle="score",
                            user=user,
