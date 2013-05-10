@@ -1,8 +1,7 @@
-from citiconnect.models import User
 #import numpy as np
 
 def get_network_score(user):
-    return user.connections_1/1000.
+    return user.connections_1/1000. + user.connections_2/500000.
 
 def get_resume_score(user):
     return user.educations + user.recommendations

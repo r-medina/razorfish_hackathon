@@ -4,6 +4,7 @@ from citiconnect import app
 from models import User
 from connect_score.make_score import make_score
 import json
+from datetime import datetime, timedelta
 
 oauth = OAuth()
 
@@ -111,8 +112,7 @@ def get_score():
     # if everything goes right
     user = get_user()
     a = make_score(user)
-    #return redirect('/score')
-    return a
+    return redirect('/score')
 
 @app.route('/join_group')
 def join():
@@ -133,20 +133,21 @@ def score_page():
 def check():
     #req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,educations,num-recommenders,positions:(startDate,endDate),connections:(id))?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,educations,num-recommenders,positions:(startDate,endDate))?format=json'
+    #req_url = 'http://api.linkedin.com/v1/people/~?format=json'
     #req_url = 'http://api.linkedin.com/v1/groups/4409416?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~/group-memberships/4409416?format=json'
-    req_url = 'http://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json'
+    #req_url = 'http://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json'
     #req_url = 'http://api.linkedin.com/v1/groups/4409416:(id,name,short-description,description,relation-to-viewer:(membership-state,available-actions),posts,counts-by-category,is-open-to-non-members,category,website-url,locale,location:(country,postal-code),allow-member-invites,site-group-url,small-logo-url,large-logo-url)?format=json'
     #req_url = 'http://api.linkedin.com/v1/groups/4409416:(id,name,relation-to-viewer:(membership-state))?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/id=DHBm9Oo-M6:(positions)?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~:(num-recommenders)?format=json'
     #req_url = 'http://api.linkedin.com/v1/people/~:(network)?format=json'
+    #req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,educations,num-recommenders,positions:(startDate,endDate),siteStandardProfileRequest)?format=json'
+    req_url = 'http://api.linkedin.com/v1/people-search?facet=network,S&page=2&format=json'
     
     resp = linkedin.get(req_url)
     thing = resp.data
-    #return json.dumps(thing)
-    return str(thing['values'][0])
-    #return str(thing['membershipState']['code'])
+    return json.dumps(thing)
 
 
 '''
@@ -156,14 +157,13 @@ def index():
 '''
 
 def make_user():
-    # first api call
-    user_req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,connections:(id),educations,num-recommenders,positions:(startDate,endDate))?format=json'
-
-
     if User.objects(uid=session['user_id']).first():
         return
 
-    resp = linkedin.get(user_req_url)
+    # first api call
+    req_url = 'http://api.linkedin.com/v1/people/~:(lastName,firstName,id,connections:(id),educations,num-recommenders,positions:(startDate,endDate),siteStandardProfileRequest)?format=json'
+
+    resp = linkedin.get(req_url)
     linkedin_user = resp.data
 
     user = User()
@@ -174,16 +174,24 @@ def make_user():
     user.connections_1 = linkedin_user['connections']['_total']
     user.educations = linkedin_user['educations']['_total']
     user.recommendations = linkedin_user['numRecommenders']
+    user.prof_url = linkedin_user['siteStandardProfileRequest']['url'].split('&')[0]
 
     # second api call
-    user_req_url = 'http://api.linkedin.com/v1/people/~/group-memberships/4409416?format=json'
-    resp = linkedin.get(user_req_url)
+    req_url = 'http://api.linkedin.com/v1/people/~/group-memberships/4409416?format=json'
+    resp = linkedin.get(req_url)
     group_info = resp.data
 
     if group_info['membershipState']['code'] == 'member':
         user.in_group = True
     else:
         user.in_group = False
+
+    # third api call
+    req_url = 'http://api.linkedin.com/v1/people-search?facet=network,S&page=2&format=json'
+    resp = linkedin.get(req_url)
+    network_info = resp.data
+
+    user.connections_2 = network_info['numResults']
 
     user.save()
 

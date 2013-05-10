@@ -10,7 +10,7 @@
 	<div class="row-fluid">
 	  <div class="span2 offset10">
 	    <img src="{{ picture }}">
-            <a href="#" class="btn btn-inverse full-name">{{ user.first_name }} {{ user.last_name }}</a>
+            <a href="{{ user.prof_url }}" target="_blank" class="btn btn-inverse full-name">{{ user.first_name }} {{ user.last_name }}</a>
 	  </div>
 	</div>
 
@@ -22,7 +22,7 @@
       <div class="well">
 	<h3>Network Score:</h3>
 	<center>
-	  <span class="score">{{ user.network_score }}</span>
+	  <span class="score">{{ '%0.2f' | format(user.network_score) }}</span>
 	</center>
       </div>
     </div>
@@ -31,7 +31,7 @@
       <div class="well">
 	<h3>Resume Score:</h3>
 	<center>
-	  <span class="score">{{ user.resume_score }}</span>
+	  <span class="score">{{ '%0.2f' | format(user.resume_score) }}</span>
 	</center>
       </div>
     </div>
@@ -40,7 +40,7 @@
       <div class="well">
 	<h3>Activity Score:</h3>
 	<center>
-	  <span class="score">{{ user.activity_score }}</span>
+	  <span class="score">{{ '%0.2f' | format(user.activity_score) }}</span>
 	</center>
       </div>
     </div>
