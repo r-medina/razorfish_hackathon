@@ -221,8 +221,12 @@ def make_user(check_exists=False):
     '''
     months_worked = 0
     for position in positions:
-        start_year = position['startDate']['year']
-        start_month = position['startDate']['month']
+        try:
+            start_year = position['startDate']['year']
+            start_month = position['startDate']['month']
+        except KeyError:
+            start_year = now.year
+            start_month = now.month
         try:
             end_year = position['endDate']['year']
             end_month = position['endDate']['month']
