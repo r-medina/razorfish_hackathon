@@ -13,5 +13,5 @@ def make_score(user):
     user.network_score = get_network_score(user)
     user.resume_score = get_resume_score(user)
     user.activity_score = get_activity_score(user)
-    user.aggregate_score = (user.network_score+user.resume_score+user.activity_score)/3.
+    user.final_score = (user.network_score+user.resume_score+user.activity_score)/3.
     user.save()

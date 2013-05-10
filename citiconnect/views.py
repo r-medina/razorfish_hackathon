@@ -133,6 +133,19 @@ def score_page():
                            picture=picture_url)
 
 
+@app.route('/rankings')
+def rank():
+    network_list = User.objects.order_by('-network_score')
+    resume_list = User.objects.order_by('-resume_score')
+    activity_list = User.objects.order_by('-activity_score')
+    return render_template('ranking_page.html',
+                           pagetitle="rank",
+                           network_list=network_list,
+                           resume_list=resume_list,
+                           activity_list=activity_list
+                           )
+
+
 @app.route('/check')
 def check():
     now = datetime.now()
