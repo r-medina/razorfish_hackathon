@@ -1,6 +1,7 @@
 from flask import request, make_response, Response, session, redirect, url_for, render_template
 from flask_oauth import OAuth
 from citiconnect import app
+import json
 
 oauth = OAuth()
 
@@ -89,6 +90,21 @@ def index():
     if resp.status == 200:
         profile = resp.data
         return render_template('home.html',Profile=profile)
+
+
+@app.route('/check')
+def check():
+    #req_url = 'http://api.linkedin.com/v1/people/~:(connections)?format=json'
+    req_url = 'http://api.linkedin.com/v1/people/~/picture-urls::(original)?format=json'
+    #req_url = 'http://api.linkedin.com/v1/groups/4409416:(id,name,short-description,description,relation-to-viewer:(membership-state,available-actions),posts,counts-by-category,is-open-to-non-members,category,website-url,locale,location:(country,postal-code),allow-member-invites,site-group-url,small-logo-url,large-logo-url)?format=json'
+    #req_url = 'http://api.linkedin.com/v1/groups/4409416:(id,name,relation-to-viewer:(membership-state))?format=json'
+    #req_url = 'http://api.linkedin.com/v1/people/id=DHBm9Oo-M6:(positions)?format=json'
+    #req_url = 'http://api.linkedin.com/v1/people/~:(num-recommenders)?format=json'
+    #req_url = 'http://api.linkedin.com/v1/people/~:(network)?format=json'
+    
+    resp = linkedin.get(req_url)
+    thing = resp.data
+    return json.dumps(thing)
 
 
 '''
